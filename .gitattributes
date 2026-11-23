@@ -1,0 +1,9 @@
+# Los JSON de contenido se sirven tal cual desde GitHub Pages: cualquier
+# conversión de saltos de línea cambia su SHA-256 y rompe la validación.
+frontend/mobile-content/*.json -text
+frontend/hymns-html/* -text
+
+# Fuentes binarias de los himnarios (solo en local).
+*.docx binary
+*.aab binary
+*.jks binary

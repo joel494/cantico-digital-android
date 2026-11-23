@@ -1,3 +1,9 @@
+import {
+  clearHymnsCache,
+  ensureHymnsInstalled,
+  installedHymnalHtml,
+  installedHymnsJson,
+} from "./hymnsInstaller";
 import type {
   BibleBook,
   BibleChapter,
@@ -285,19 +291,37 @@ async function loadFile<T>(name: string, manifest: ContentManifest): Promise<T> 
 let inFlight: Promise<MobileContent> | null = null;
 
 async function load(): Promise<MobileContent> {
-  const manifest = await loadManifest();
-  if (manifest.schema !== 1) {
-    throw new Error("La versión del manifiesto de contenido no es compatible.");
-  }
+  // Los himnos se "instalan" desde Firebase Hosting de forma independiente a
+  // la Biblia: si fallan, la Biblia sigue funcionando.
+  const hymnsTask = ensureHymnsInstalled().then(() => installedHymnsJson());
+  const bibleTask = (async () => {
+    const manifest = await loadManifest();
+    if (manifest.schema !== 1) {
+      throw new Error("La versión del manifiesto de contenido no es compatible.");
+    }
+    return { manifest, rawBible: await loadFile<unknown>("bible.json", manifest) };
+  })();
 
-  const [rawHymns, rawBible] = await Promise.all([
-    loadFile<unknown>("hymns.json", manifest),
-    loadFile<unknown>("bible.json", manifest),
+  const [hymnsResult, bibleResult] = await Promise.allSettled([
+    hymnsTask,
+    bibleTask,
   ]);
+
+  if (bibleResult.status === "rejected") throw bibleResult.reason;
+  const { manifest, rawBible } = bibleResult.value;
+
+  let hymnals: Hymnal[] = [];
+  if (hymnsResult.status === "fulfilled" && hymnsResult.value) {
+    try {
+      hymnals = normalizeHymns(JSON.parse(hymnsResult.value));
+    } catch {
+      hymnals = [];
+    }
+  }
 
   return {
     manifest,
-    hymnals: normalizeHymns(rawHymns),
+    hymnals,
     bible: normalizeBible(rawBible),
   };
 }
@@ -310,7 +334,11 @@ export function loadMobileContent(): Promise<MobileContent> {
   return inFlight;
 }
 
-export function clearMobileContentCache() {
+export async function clearMobileContentCache() {
   inFlight = null;
-  return caches.delete(CACHE_NAME);
+  await caches.delete(CACHE_NAME);
+  await clearHymnsCache();
 }
+
+export { ensureHymnsInstalled, installedHymnalHtml };
+export type { InstallerStatus, HymnsMeta, HymnsInstallResult } from "./hymnsInstaller";

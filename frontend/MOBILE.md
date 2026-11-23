@@ -12,21 +12,29 @@ frontend/
 ├── android/                       # proyecto nativo
 │   ├── keystore.properties        # firma (ignorado por git, con contraseñas)
 │   └── keystore.properties.example
-├── mobile-content/                # datos de contenido (no se empaquetan)
-│   ├── hymns-data.json            # fuente versionada: 1088 cánticos
+├── mobile-content/                # fuentes locales (no se empaquetan)
+│   ├── hymns-data.json            # fuente local: 1088 cánticos
 │   ├── rvr60.json                 # fuente versionada: Biblia RVR60
 │   ├── hymns.json                 # generado
 │   ├── bible.json                 # generado
 │   └── manifest.json              # generado: SHA-256 y tamaños
+├── hymns-html/                    # generado: himnarios para Firebase Hosting
+│   ├── hymns-meta.json            # fecha + SHA-256 de los 4 archivos
+│   ├── hymns.json                 # lo que consume la app
+│   ├── alabanzas.html             # 533 himnos
+│   └── armonia.html               # 555 himnos
+├── firebase.json                  # config de Firebase Hosting (plan Spark)
 ├── scripts/
 │   ├── export-mobile-content.mjs  # exporta JSON + manifest con SHA-256
+│   ├── export-hymns-html.mjs      # exporta los 2 HTML + hymns-meta.json
+│   ├── upload-firebase-hymns.mjs  # publica los himnos en Firebase Hosting
 │   ├── serve-mobile-content.mjs   # servidor local para desarrollo
 │   ├── build-aab.mjs              # firma y compila el AAB
 │   └── test-mobile-ui.mjs         # prueba E2E de los 4 módulos
 └── src/mobile/
     ├── app/MobileApp.tsx
     ├── components/                # barra inferior, headers, estados
-    ├── data/                      # cliente HTTPS + caché + normalización
+    ├── data/                      # cliente HTTPS + instalador de himnos + caché
     ├── features/                  # home, cánticos, biblia, configuración
     ├── state/mobileSettings.tsx   # Preferences + fallback localStorage
     └── styles/mobile.css          # tema claro, safe-area, unidades
@@ -59,34 +67,53 @@ npm run content:serve        # solo desarrollo: http://127.0.0.1:4174
 - `hymns.json` — 1088 cánticos.
 - `bible.json` — 31002 versículos.
 
-### Contenido en local vs. GitHub Pages (IMPORTANTE)
+### Contenido en local, GitHub Pages y Firebase Hosting (IMPORTANTE)
 
-Los himnarios de los dos himnarios (**`*.docx`, `hymns-data.json` y `hymns.json`**) se mantienen **solo en local**, por decisión del usuario. `frontend/.gitignore` los excluye y **no deben versionarse ni publicarse** sin autorización explícita. Para trabajar con ellos en desarrollo:
+Los himnarios (**`*.docx`, `hymns-data.json`, `hymns.json` y los HTML**) se mantienen **solo en local y en Firebase Hosting** (`https://cantico-digital.web.app`), nunca en GitHub. `frontend/.gitignore` los excluye del repo. El proyecto Firebase está en plan Spark: Storage exige Blaze, por eso se usa Hosting.
+
+Para trabajar con ellos en desarrollo:
 
 ```powershell
 cd frontend
 npm run content:export     # regenera hymns.json desde hymns-data.json (solo en disco)
+npm run hymns:export       # genera hymns-html/ (2 HTML + hymns.json + hymns-meta.json)
 npm run content:serve      # sirve todo el contenido desde 127.0.0.1:4174
 npm run dev:mobile         # app en 127.0.0.1:5174/mobile.html
 ```
 
-En GitHub Pages solo se publican (rama `main` del repo `joel494/cantico-digital-android`):
+GitHub Pages (rama `main` del repo `joel494/cantico-digital-android`) sirve únicamente la Biblia:
 
 - `https://joel494.github.io/cantico-digital-android/frontend/mobile-content/manifest.json`
 - `https://joel494.github.io/cantico-digital-android/frontend/mobile-content/bible.json`
 - `https://joel494.github.io/cantico-digital-android/frontend/mobile-content/rvr60.json`
 
-Todos devuelven `Access-Control-Allow-Origin: *`.
+Firebase Hosting sirve los himnarios instalables (todos con `Access-Control-Allow-Origin: *`):
 
-> **Consecuencia temporal:** `hymns.json` ya no está en Pages. Como `contentClient.ts` carga himnos y Biblia con `Promise.all`, la app servida desde GitHub Pages mostrará el estado de error de contenido hasta que se vuelva a autorizar publicar `hymns.json`. La Biblia y el manifiesto siguen disponibles. La app NO ha sido subida a Play Console (regla 8 de `AGENTS.md`).
+- `https://cantico-digital.web.app/hymns-meta.json`
+- `https://cantico-digital.web.app/hymns.json`
+- `https://cantico-digital.web.app/alabanzas.html` (533 himnos)
+- `https://cantico-digital.web.app/armonia.html` (555 himnos)
 
-El archivo `.env.mobile` apunta a esa URL pública de Pages (no es un secreto), así que `npm run build:aab` genera el bundle sin pasos extra. Para otro despliegue, cámbialo por tu propio host HTTPS:
+`.env.mobile` apunta a ambos hosts (no son secretos):
 
 ```dotenv
-VITE_CANTICO_CONTENT_BASE_URL=https://contenido.tudominio.com/cantico
+VITE_CANTICO_CONTENT_BASE_URL=https://joel494.github.io/cantico-digital-android/frontend/mobile-content
+VITE_CANTICO_HYMNS_BASE_URL=https://cantico-digital.web.app
 ```
 
-La app valida el hash de cada archivo contra el manifiesto y los guarda en **Cache Storage**, de modo que la primera descarga queda disponible offline y un nuevo manifiesto invalida la caché.
+La Biblia se valida contra `manifest.json` (SHA-256) y se guarda en **Cache Storage**. Los himnos se instalan de forma independiente: en cada arranque `hymnsInstaller.ts` comprueba si están en caché, consulta `hymns-meta.json` en Firebase y compara `generatedAt` y los SHA-256 de los dos HTML. Si hay cualquier cambio (fecha o hash), descarga los 4 archivos y reinstala la caché. Si Firebase falla, la Biblia sigue funcionando.
+
+### Publicar cambios en los himnarios
+
+Requiere sesión de Firebase CLI en este IDE (`npm run firebase:login`). El proyecto es `cantico-digital` y la configuración está en `frontend/firebase.json`.
+
+```powershell
+cd frontend
+npm run hymns:export    # regenera HTML + hymns-meta.json con fecha y SHA-256 nuevos
+npm run hymns:upload    # firebase deploy --only hosting --project cantico-digital
+```
+
+Los archivos generados en `hymns-html/` **no se versionan**. Nunca subas la app a Play Console sin autorización explícita (regla 8 de `AGENTS.md`).
 
 > Publica los textos de himnarios solo si cuentas con autorización. Verifica siempre la situación legal antes de publicar.
 

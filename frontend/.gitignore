@@ -12,11 +12,14 @@ dist
 dist-ssr
 dist-mobile
 # Contenido pesado: solo se versiona lo que GitHub Pages necesita servir.
-# Los himnarios (hymns-data.json / hymns.json) se mantienen SOLO EN LOCAL.
+# Los himnarios se mantienen SOLO EN LOCAL y en Firebase Hosting.
 mobile-content/*
 !mobile-content/rvr60.json
 !mobile-content/manifest.json
 !mobile-content/bible.json
+hymns-html/
+firebase-service-account.json
+.firebase/
 mobile-home.png
 mobile-hymn.png
 mobile-bible.png
