@@ -1,0 +1,11 @@
+node_modules
+.env
+.env.mobile
+*.log
+
+# Audios originales: no se empaquetan en el AAB (el contenido va por HTTPS).
+himnos y coros de Armonia Espiritual en audio/
+
+# Las reglas específicas del proyecto Android están en:
+#   frontend/.gitignore              (dist-mobile, contenido generado, capturas)
+#   frontend/android/.gitignore      (local.properties, *.jks, keystore.properties)

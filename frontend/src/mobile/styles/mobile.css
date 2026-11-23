@@ -1,0 +1,55 @@
+/* Tema claro forzado: la app móvil no sigue el modo oscuro del sistema. */
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.mobile-root {
+  min-height: 100dvh;
+  background: oklch(97.6% 0.012 85);
+  color: oklch(24% 0.03 45);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.mobile-content {
+  /* 64 px de barra + 20 px de respiración + safe-area del dispositivo. */
+  padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+}
+
+.mobile-bottom-nav {
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  border-top-width: 1px;
+  background: oklch(99.2% 0.008 85 / 0.97);
+  backdrop-filter: blur(12px);
+}
+
+.mobile-hairline {
+  border-width: 1px;
+}
+
+.mobile-tap {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-readable {
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-tap,
+  .mobile-bottom-nav * {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "version": "a7a863fdc00a06cc5ff13271530eeba82273751cf3ab9a83ed31457774686716",
+  "generatedAt": "2026-11-23T02:29:46.864Z",
+  "counts": {
+    "hymns": 1088,
+    "verses": 31002
+  },
+  "files": [
+    {
+      "name": "hymns.json",
+      "url": "./hymns.json",
+      "bytes": 1497935,
+      "sha256": "676553253cd167ca19de4042f49ef6fa4c943791f219df583f098f1bdad11742"
+    },
+    {
+      "name": "bible.json",
+      "url": "./bible.json",
+      "bytes": 10259552,
+      "sha256": "215ccdff46391ff4afad174399540abd38b1f1bccd8f60f007994e4f920972e5"
+    }
+  ]
+}

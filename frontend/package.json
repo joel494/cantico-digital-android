@@ -1,0 +1,48 @@
+{
+  "name": "cantico-digital-android",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build:mobile": "vite build --config vite.mobile.config.ts --mode mobile && node scripts/copy-mobile-entry.mjs",
+    "dev:mobile": "vite --config vite.mobile.config.ts --mode mobile",
+    "preview:mobile": "vite preview --config vite.mobile.config.ts",
+    "content:export": "node scripts/export-mobile-content.mjs",
+    "content:serve": "node scripts/serve-mobile-content.mjs",
+    "cap:add:android": "cap add android",
+    "cap:sync": "npm run build:mobile && cap sync android",
+    "cap:build:aab": "npm run cap:sync && cap build android --androidreleasetype AAB",
+    "build:aab": "node scripts/build-aab.mjs",
+    "cap:open": "cap open android",
+    "typecheck": "tsc --noEmit",
+    "test:mobile:ui": "node scripts/test-mobile-ui.mjs"
+  },
+  "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/app-launcher": "^8.0.1",
+    "@capacitor/browser": "^8.0.5",
+    "@capacitor/clipboard": "^8.0.1",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/preferences": "^8.0.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.468.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.0",
+    "tailwind-merge": "^2.5.5"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "puppeteer-core": "^25.16.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}

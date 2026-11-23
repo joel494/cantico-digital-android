@@ -1,0 +1,10 @@
+{
+  "name": "cantico-digital-android",
+  "private": true,
+  "scripts": {
+    "test:mobile:ui": "cd frontend && npm run test:mobile:ui"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.16.0"
+  }
+}
