@@ -59,7 +59,19 @@ npm run content:serve        # solo desarrollo: http://127.0.0.1:4174
 - `hymns.json` — 1088 cánticos.
 - `bible.json` — 31002 versículos.
 
-En producción, sube **solo esos tres archivos generados** a un host HTTPS con certificado válido y CORS habilitado para `https://localhost` (o `*`). Copia `.env.mobile.example` a `.env.mobile` y apunta a ese origen:
+En producción se suben **solo esos tres archivos generados** a un host HTTPS con CORS. En este proyecto se publican mediante **GitHub Pages**, desde la rama `main` del repo `joel494/cantico-digital-android`:
+
+```
+https://joel494.github.io/cantico-digital-android/frontend/mobile-content/
+```
+
+Los tres archivos son públicos y devuelven `Access-Control-Allow-Origin: *`:
+
+- `https://joel494.github.io/cantico-digital-android/frontend/mobile-content/manifest.json`
+- `https://joel494.github.io/cantico-digital-android/frontend/mobile-content/hymns.json`
+- `https://joel494.github.io/cantico-digital-android/frontend/mobile-content/bible.json`
+
+El archivo `.env.mobile` ya está apuntando a esa URL (es pública, no un secreto), así que `npm run build:aab` genera el bundle definitivo sin pasos extra. Para otro despliegue, cámbialo por tu propio host HTTPS:
 
 ```dotenv
 VITE_CANTICO_CONTENT_BASE_URL=https://contenido.tudominio.com/cantico
