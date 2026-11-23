@@ -3,6 +3,10 @@ node_modules
 .env.mobile
 *.log
 
+# Archivos temporales de Office
+~$*
+.idea/
+
 # Audios originales: no se empaquetan en el AAB (el contenido va por HTTPS).
 himnos y coros de Armonia Espiritual en audio/
 
