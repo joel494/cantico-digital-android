@@ -6,6 +6,13 @@ node_modules
 ~$*
 .idea/
 
+# Fuentes de los himnarios: SOLO EN LOCAL, nunca en GitHub.
+# Las fuentes convertidas viven en frontend/mobile-content/ (también ignoradas).
+*.docx
+
+# AAB firmado: se entrega localmente, no se versiona.
+*.aab
+
 # Audios originales: no se empaquetan en el AAB (el contenido va por HTTPS).
 himnos y coros de Armonia Espiritual en audio/
 

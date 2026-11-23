@@ -11,13 +11,11 @@ node_modules
 dist
 dist-ssr
 dist-mobile
-# Fuentes y contenido generado se versionan: GitHub Pages sirve los 3 archivos
-# que la app descarga por HTTPS (manifest.json, hymns.json, bible.json).
+# Contenido pesado: solo se versiona lo que GitHub Pages necesita servir.
+# Los himnarios (hymns-data.json / hymns.json) se mantienen SOLO EN LOCAL.
 mobile-content/*
-!mobile-content/hymns-data.json
 !mobile-content/rvr60.json
 !mobile-content/manifest.json
-!mobile-content/hymns.json
 !mobile-content/bible.json
 mobile-home.png
 mobile-hymn.png

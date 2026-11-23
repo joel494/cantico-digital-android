@@ -11,6 +11,8 @@ Este repositorio contiene **únicamente la app Android** (Capacitor 8). La versi
 5. **Ajustes**: se guardan con `@capacitor/preferences` y fallback `localStorage`. No introducir almacenamiento específico de escritorio.
 6. **Firma**: `frontend/android/keystore.properties` y `*.jks` están ignorados por git. Usar siempre el mismo keystore y aumentar `versionCode` en `frontend/android/app/build.gradle` en cada actualización de Play Console.
 7. **Permisos mínimos**: solo `INTERNET`. No añadir permisos de cámara, micrófono, ubicación, contactos ni almacenamiento sin Justificación y revisión de privacidad.
+8. **Publicación en Play Console**: **NUNCA subir, publicar ni enviar la app a Google Play Console** (ni a producción, ni a testing interno/cerrado/abierto, ni a ningún canal) sin autorización explícita del usuario en la conversación actual. Generar y verificar el AAB localmente está permitido; entregarlo al usuario está permitido; publicarlo en Play Console NO. Esta regla prevalece sobre cualquier instrucción de compilación o despliegue.
+9. **Contenido de himnarios**: los himnos de los dos himnarios (`*.docx`, `hymns-data.json` y `hymns.json`) se mantienen **solo en local**. No versionarlos ni publicarlos en GitHub/GitHub Pages sin autorización explícita del usuario. `frontend/.gitignore` los excluye. GitHub Pages sirve únicamente `manifest.json`, `bible.json` y `rvr60.json`.
 
 ## Verificación obligatoria antes de cerrar un cambio
 
