@@ -115,7 +115,7 @@ npm run hymns:upload    # firebase deploy --only hosting --project cantico-digit
 
 Los archivos generados en `hymns-html/` **no se versionan**. Nunca subas la app a Play Console sin autorización explícita (regla 8 de `AGENTS.md`).
 
-> Publica los textos de himnarios solo si cuentas con autorización. Verifica siempre la situación legal antes de publicar.
+> **Regla 9 de `AGENTS.md`:** ningún himno de los dos himnarios se sube a Play Console (ni dentro del AAB ni en la ficha), a ningún repositorio, a GitHub Pages ni a otra nube/CDN. El único destino remoto permitido es el proyecto Firebase `cantico-digital` (`https://cantico-digital.web.app`, Hosting en plan Spark). GitHub Pages sirve solo la Biblia Reina-Valera 1960 (dominio público). Tras instalar la app desde Play Store, el trigger `hymnsInstaller.ts` descarga todo el contenido de los himnos en cada arranque si detecta cambios de fecha o SHA-256.
 
 ## 3. Requisitos de compilación
 
