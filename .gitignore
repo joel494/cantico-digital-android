@@ -13,6 +13,9 @@ node_modules
 # AAB firmado: se entrega localmente, no se versiona.
 *.aab
 
+# Capturas tomadas con `npm run device:screenshot`.
+emulator-screenshot.png
+
 # Audios originales: no se empaquetan en el AAB (el contenido va por HTTPS).
 himnos y coros de Armonia Espiritual en audio/
 

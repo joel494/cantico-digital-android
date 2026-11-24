@@ -136,6 +136,7 @@ Quedó portable en `%LOCALAPPDATA%\CanticoToolchain` (no requiere administrador)
 
 - `jdk\jdk-21.0.13.1+2` — Temurin 21.
 - `android-sdk\` — Platform 36, Build Tools 36.0.0 y Platform-Tools.
+- `bundletool-all-1.18.1.jar` — convierte el AAB en APK para instalar en emulador.
 - `frontend\android\local.properties` apunta a ese SDK.
 
 `scripts/build-aab.mjs` detecta esa ruta automáticamente si no hay `JAVA_HOME`/`ANDROID_HOME`, así que basta con `npm run build:aab`. Si se instala Android Studio aparte, sus variables de entorno tienen prioridad.
@@ -161,6 +162,25 @@ npm run typecheck
 npm run cap:sync
 npm run cap:open
 ```
+
+### Probar en dispositivo/emulador Android
+
+El AAB no se puede instalar con `adb`; `scripts/device-android.mjs` usa `bundletool` para convertirlo en APK universal con **la misma firma** y lo instala por adb.
+
+```powershell
+cd frontend
+npm run device:list         # lista dispositivos (AVD "Medium Phone API 37.0")
+npm run device:build        # recompila el AAB firmado si hicieron cambios
+npm run device:run          # convierte el AAB, instala y lanza la app
+npm run device:logs         # logcat filtrado por el paquete
+npm run device:screenshot   # guarda emulator-screenshot.png en la raíz
+```
+
+Opciones: `npm run device:run -- --serial emulator-5554`, `--rebuild`, `--reinstall`.
+
+Requisitos detectados automáticamente: `adb` (SDK portable o Android Studio), JDK 21 y `bundletool-all-*.jar` en `%LOCALAPPDATA%\CanticoToolchain` (o la variable `BUNDLETOOL_JAR`). La sesión Firebase CLI ya está activa, así que la app descarga los himnos desde `https://cantico-digital.web.app`.
+
+> Verificado en `Medium Phone API 37.0` (Android 17, API 37): Home, 1088 cánticos cargados desde Firebase, Biblia y Configuración. Play Console sigue intacto (regla 8 de `AGENTS.md`).
 
 ## 5. Firmar y generar el `.aab`
 
